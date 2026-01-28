@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan Pernikahan</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html.lock,body.lock{overflow:hidden;height:100%}
+body {
+  background-image: url('Bg.jpg');
+  background-position: center;
+  background-size: cover;   /* atau contain */
+  background-repeat: no-repeat;
+  color: #fff;
+  font-family: 'Lora', serif;
+}
+
+/* COVER */
+#cover {
+  background: url('Cover.gif') center/contain no-repeat;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* tetap di bawah */
+  align-items: center;
+  text-align: center;
+  padding: 0 20px 120px 20px; /* padding-bottom cukup agar tidak terlalu bawah */
+}
+
+#coverCountdown {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px; /* jarak countdown ke nama */
+}
+
+.cd-box {
+  background: #d4af37;
+  color: #000;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  min-width: 50px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.cover-footer {
+  margin-bottom: 20px; /* tombol buka undangan sedikit jarak dari bawah */
+}
+
+.kepada {
+  color: #d4af37;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.guest-name {
+  color: #d4af37;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.btn-open {
+  border: 1.5px solid #d4af37;
+  background: transparent;
+  color: #d4af37;
+  padding: 14px 36px;
+  border-radius: 30px;
+  font-family: 'Lora', serif;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* MUSIC */
+#musicBtn{
+  position:fixed;
+  top:20px;right:20px;
+  width:52px;height:52px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#d4af37,#f5d77a);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  cursor:pointer;
+  display:none;
+  z-index:999;
+}
+#musicBtn.playing{animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SECTION */
+section{
+  width: 100%;
+  max-width: 414px;       /* lebar maksimum sesuai HP */
+  aspect-ratio: 9/16;     /* tinggi otomatis mengikuti rasio 9:16 */
+  min-height: 100vh;      /* selalu setinggi layar HP */
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;  /* ubah dari contain menjadi cover */
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: 1s;
+  flex-direction: column;
+}
+section.show{opacity:1;transform:none}
+
+/* NAV */
+#nav{
+  position:fixed;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+  display:none;
+  gap:12px;
+  background:rgba(0,0,0,.7);
+  padding:12px 18px;
+  border-radius:40px;
+  z-index:999;
+}
+#nav.show{display:flex}
+.nav-item{
+  width:44px;height:44px;
+  border-radius:50%;
+  background:rgba(212,175,55,.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.nav-item img{width:22px}
+
+/* GALERI */
+#galeri .slider{
+  width:90%; height:300px; position:relative; overflow:hidden; margin: 20px auto 12px auto;
+}
+#galeri .slider img{
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:70%; height:70%;
+  object-fit:contain;
+  opacity:0;
+  transition:1s;
+}
+#galeri .slider img.active{opacity:1}
+
+/* THUMBNAILS (optional) */
+#galeri .thumbnails{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+#galeri .thumbnails img{
+  width: 100%;
+  height:70px;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: .6;
+}
+
+#galeri .thumbnails img:hover{
+  opacity: 1;
+  border: 2px solid #d4af37;
+}
+
+/* GIFT */
+#gift{background:url('Gift.jpg') center/contain no-repeat;flex-direction:column}
+.bank-name,.rek-number{color:#d4af37;font-size:20px;margin:4px 0;}
+.btn-copy{
+  border:1px solid #d4af37;
+  background:transparent;
+  color:#d4af37;
+  padding:10px 28px;
+  border-radius:25px;
+  cursor:pointer;
+  margin-top:6px;
+}
+
+/* RSVP */
+#rsvp {
+  background: url('Rsvp.jpg') center/contain no-repeat;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 150px 20px 80px 20px;
+  min-height: 736px;
+}
+
+#rsvp form {
+  background: rgba(0,0,0,0.6);
+  padding: 5px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 310px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center; /* tombol center */
+}
+
+#rsvp input, #rsvp select, #rsvp textarea {
+  width: 100%;
+  padding: 5px;
+  border-radius: 6px;
+  border: none;
+  font-family: 'Lora', serif;
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+#rsvp button {
+  background: #d4af37;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 24px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: 'Lora', serif;
+  margin-top: 10px;
+  align-self: center;
+  transition: transform 0.2s;
+}
+
+#rsvp button:hover {
+  transform: scale(1.05);
+}
+
+/* Daftar RSVP realtime */
+#rsvpListWrapper {
+  width: 100%;
+  max-width: 360px;
+  max-height: 360px; /* scrollable */
+  overflow-y: auto;
+  margin-top: 12px;
+  padding-right: 6px;
+}
+
+#rsvpListWrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+#rsvpListWrapper::-webkit-scrollbar-thumb {
+  background: #d4af37;
+  border-radius: 10px;
+}
+
+#rsvpListWrapper::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.1);
+}
+
+.rsvp-item {
+  background: rgba(0,0,0,0.55);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  text-align: left;
+  border: 1px solid rgba(212,175,55,0.3);
+}
+
+.rsvp-item b {
+  color: #d4af37;
+
+}
+#rsvpForm label {
+  color: #d4af37;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+}
+/* WATERMARK */
+.watermark{
+  position:absolute;
+  bottom:80px; /* lebih atas supaya tidak ketutup nav */
+  left:50%;
+  transform:translateX(-50%);
+  letter-spacing:3px;
+  color:#d4af37;
+}
+</style>
+</head>
+<body class="lock">
+
+<!-- COVER -->
+<section id="cover" class="show">
+  <div id="coverCountdown">
+    <div class="cd-box" id="cd-days">00</div>
+    <div class="cd-box" id="cd-hours">00</div>
+    <div class="cd-box" id="cd-minutes">00</div>
+    <div class="cd-box" id="cd-seconds">00</div>
+  </div>
+  <p class="kepada">Kepada Yth</p>
+  <h1 id="guest" class="guest-name">Tamu Undangan</h1>
+  <button class="btn-open" onclick="openInvitation()">Buka Undangan</button>
+</section>
+
+<audio id="music" src="music.mp3" loop></audio>
+<div id="musicBtn" onclick="toggleMusic()">♪</div>
+
+<!-- SECTIONS -->
+<section style="background-image:url('Profil-umum.gif')"></section>
+<section style="background-image:url('Qs.gif')"></section>
+<section style="background-image:url('Profil-wanita.gif')"></section>
+<section style="background-image:url('Profil-pria.gif')"></section>
+<section id="tanggal" style="background-image:url('Tanggal.gif')"></section>
+<section id="lokasi" style="background-image:url('Lokasi.gif')"></section>
+<section id="kisah" style="background-image:url('Kisah.gif')"></section>
+
+<!-- GALERI -->
+<section id="galeri" style="background-image:url('Gallery.jpg');">
+  <div class="slider">
+    <img src="prewedd1.jpg" class="active">
+    <img src="prewedd2.jpg">
+    <img src="prewedd3.jpg">
+    <img src="prewedd4.jpg">
+    <img src="prewedd5.jpg">
+  </div>
+  <div class="thumbnails">
+    <img src="prewedd1.jpg" onclick="setSlide(0)">
+    <img src="prewedd2.jpg" onclick="setSlide(1)">
+    <img src="prewedd3.jpg" onclick="setSlide(2)">
+    <img src="prewedd4.jpg" onclick="setSlide(3)">
+    <img src="prewedd5.jpg" onclick="setSlide(4)">
+    <img src="prewedd1.jpg" onclick="setSlide(0)">
+  </div>
+</section>
+
+<!-- TEMPLATE -->
+<section style="background-image:url('Template.jpg')">
+  <a href="https://drive.google.com/drive/folders/19mMJeYrZ7qlOQ1N47A35b80JIqlYLQUJ" target="_blank" class="btn-open">Buka Template Filter IG</a>
+</section>
+
+<!-- GIFT -->
+<section id="gift">
+  <p class="bank-name">BCA a.n Fulan</p>
+  <p id="rek-bca" class="rek-number">1234567890</p>
+  <button class="btn-copy" onclick="copyText('rek-bca')">Salin Rekening</button>
+</section>
+
+<!-- RSVP -->
+<section id="rsvp">
+  <form id="rsvpForm">
+    <label for="nama">Nama</label>
+    <input name="nama" placeholder="Nama" required>
+    <label for="hadir">Kehadiran</label>
+    <select name="hadir">
+      <option>Hadir</option>
+      <option>Tidak Hadir</option>
+    </select>
+    <label for="pesan">Ucapan</label>
+    <textarea name="pesan" placeholder="Pesan & Doa"></textarea>
+    <button type="submit">Kirim RSVP</button>
+  </form>
+
+  <div id="rsvpListWrapper">
+    <div id="listRsvp"></div>
+  </div>
+</section>
+<section style="background-image:url('Doa.gif')"></section>
+<!-- TERIMAKASIH -->
+<section style="background-image:url('Terimakasih.jpg');position:relative">
+  <div class="watermark">ILENADIGI</div>
+</section>
+
+<!-- NAV -->
+<div id="nav">
+  <div class="nav-item" onclick="go('tanggal')"><img src="Tanggal.svg"></div>
+  <div class="nav-item" onclick="go('lokasi')"><img src="Lokasi.svg"></div>
+  <div class="nav-item" onclick="go('kisah')"><img src="Kisah.svg"></div>
+  <div class="nav-item" onclick="go('galeri')"><img src="Galeri.svg"></div>
+  <div class="nav-item" onclick="go('galeri')"><img src="Gift.svg"></div>
+  <div class="nav-item" onclick="go('rsvp')"><img src="Rsvp.svg"></div>
+</div>
+
+<script>
+/* AMBIL ELEMENT */
+const guest=document.getElementById("guest");
+const cover=document.getElementById("cover");
+const nav=document.getElementById("nav");
+const music=document.getElementById("music");
+const musicBtn=document.getElementById("musicBtn");
+const rsvpForm=document.getElementById("rsvpForm");
+const listRsvp=document.getElementById("listRsvp");
+const cdDays=document.getElementById("cd-days");
+const cdHours=document.getElementById("cd-hours");
+const cdMinutes=document.getElementById("cd-minutes");
+const cdSeconds=document.getElementById("cd-seconds");
+
+/* NAMA TAMU */
+const q=new URLSearchParams(location.search);
+if(q.get("nama")) guest.innerText = q.get("nama");
+
+/* OPEN UNDANGAN */
+function openInvitation(){
+  document.body.classList.remove("lock");
+  cover.style.display="none";
+  nav.classList.add("show");
+  musicBtn.style.display="flex";
+  music.play();
+  musicBtn.classList.add("playing");
+  reveal();
+}
+
+/* REVEAL SECTION ON SCROLL */
+function reveal(){
+  document.querySelectorAll("section").forEach(s=>{
+    if(s.getBoundingClientRect().top<innerHeight-100) s.classList.add("show");
+  });
+}
+addEventListener("scroll",reveal);
+
+/* NAV */
+function go(id){
+  document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+/* MUSIC */
+function toggleMusic(){
+  music.paused ? (music.play(),musicBtn.classList.add("playing")) : (music.pause(),musicBtn.classList.remove("playing"));
+}
+
+/* COUNTDOWN */
+const target=new Date("2026-11-30T09:00:00").getTime();
+setInterval(()=>{
+  const diff=target-Date.now();
+  if(diff<=0) return;
+  cdDays.innerText=Math.floor(diff/86400000).toString().padStart(2,"0");
+  cdHours.innerText=Math.floor(diff%86400000/3600000).toString().padStart(2,"0");
+  cdMinutes.innerText=Math.floor(diff%3600000/60000).toString().padStart(2,"0");
+  cdSeconds.innerText=Math.floor(diff%60000/1000).toString().padStart(2,"0");
+},1000);
+
+/* GALERI AUTO SLIDE */
+let idx=0;
+const slides=document.querySelectorAll("#galeri .slider img");
+function setSlide(i){
+  slides[idx].classList.remove("active");
+  idx=i;
+  slides[idx].classList.add("active");
+}
+setInterval(()=>setSlide((idx+1)%slides.length),4000);
+
+/* COPY REKENING */
+function copyText(id){
+  navigator.clipboard.writeText(document.getElementById(id).innerText);
+  alert("Berhasil disalin!");
+}
+
+/* RSVP POST & GET Realtime */
+document.addEventListener("DOMContentLoaded", () => {
+  const rsvpForm = document.getElementById("rsvpForm");
+  const listRsvp = document.getElementById("listRsvp");
+  const scriptURL_POST = "https://script.google.com/macros/s/AKfycbyeKMLqakKbfXOIVt-NuLcMZrVLa2ffPi4ZCUslPwsx2Xdz4HTIHya6ghEivJ6GMCgPBQ/exec"; // Apps Script POST
+  const scriptURL_GET  = "https://script.google.com/macros/s/AKfycbyeKMLqakKbfXOIVt-NuLcMZrVLa2ffPi4ZCUslPwsx2Xdz4HTIHya6ghEivJ6GMCgPBQ/exec";  // Apps Script GET (JSON)
+
+  // POST data
+  if(rsvpForm){
+    rsvpForm.addEventListener("submit", e=>{
+      e.preventDefault();
+      const d = new FormData(rsvpForm);
+      fetch(scriptURL_POST,{method:"POST",body:d})
+        .then(()=> {
+          loadRSVP(); // refresh setelah submit
+          rsvpForm.reset();
+        })
+        .catch(err=>console.error("Error RSVP:",err));
+    });
+  }
+
+  // GET data realtime
+  function loadRSVP(){
+    fetch(scriptURL_GET)
+      .then(res=>res.json())
+      .then(data=>{
+        listRsvp.innerHTML="";
+        data.reverse().forEach(item=>{
+          listRsvp.insertAdjacentHTML("beforeend",`
+            <div class="rsvp-item">
+              <b>${item.nama}</b><br>
+              ${item.hadir}<br>
+              <div class="ucapan">${item.pesan || ""}</div>
+            </div>
+          `);
+        });
+      })
+      .catch(err=>console.error("Error load RSVP:",err));
+  }
+
+  loadRSVP();
+  setInterval(loadRSVP,10000);
+});
+</script>
+</body>
+</html>
