@@ -45,24 +45,6 @@ body {
   aspect-ratio: auto;
   min-height: 100vh;
 }
-
-/* Tablet & layar besar portrait */
-@media (min-width: 600px) and (orientation: portrait) {
-  #cover {
-    max-width: 600px;
-    min-height: 100vh;
-    aspect-ratio: auto;
-  }
-}
-
-/* Semua perangkat posisi LANDSCAPE */
-@media (orientation: landscape) {
-  #cover {
-    aspect-ratio: 9/16;   /* paksa tetap portrait look */
-    height: 100vh;
-    max-height: 100vh;
-  }
-
 #coverCountdown {
   display: flex;
   gap: 8px;
